@@ -2,7 +2,7 @@
 
   (general
     (thickness 1.6)
-    (drawings 8)
+    (drawings 12)
     (tracks 247)
     (zones 0)
     (modules 30)
@@ -1139,7 +1139,7 @@
     (tags "SOIC 1.27")
     (path /5F2D98F1)
     (attr smd)
-    (fp_text reference U1 (at 0 8.8) (layer B.SilkS)
+    (fp_text reference U1 (at 0 -8.75) (layer B.SilkS)
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
     )
     (fp_text value MAX7219 (at 0 -8.8) (layer B.Fab) hide
@@ -1260,7 +1260,7 @@
     (descr "Through hole straight pin header, 1x05, 2.54mm pitch, single row")
     (tags "Through hole pin header THT 1x05 2.54mm single row")
     (path /5F2FBB94)
-    (fp_text reference J1 (at 0 2.33 90) (layer B.SilkS)
+    (fp_text reference J1 (at 0 2.75 180) (layer B.SilkS)
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
     )
     (fp_text value data (at 0 -12.49 90) (layer B.Fab) hide
@@ -1337,6 +1337,21 @@
     )
   )
 
+  (gr_text GND (at 193.25 94.25 270) (layer B.SilkS)
+    (effects (font (size 1.5 1.5) (thickness 0.3)) (justify mirror))
+  )
+  (gr_text 5V (at 190.5 95 270) (layer B.SilkS)
+    (effects (font (size 1.5 1.5) (thickness 0.3)) (justify mirror))
+  )
+  (gr_text DIN (at 188 94.5 270) (layer B.SilkS)
+    (effects (font (size 1.5 1.5) (thickness 0.3)) (justify mirror))
+  )
+  (gr_text CLK (at 185.25 94.5 270) (layer B.SilkS)
+    (effects (font (size 1.5 1.5) (thickness 0.3)) (justify mirror))
+  )
+  (gr_text LOAD (at 182.75 93.75 270) (layer B.SilkS)
+    (effects (font (size 1.5 1.5) (thickness 0.3)) (justify mirror))
+  )
   (gr_line (start 181 100.25) (end 181 100) (layer Edge.Cuts) (width 0.2))
   (gr_line (start 210.25 100.25) (end 181 100.25) (layer Edge.Cuts) (width 0.2))
   (gr_line (start 210.25 99) (end 210.25 100.25) (layer Edge.Cuts) (width 0.2))
@@ -1344,7 +1359,6 @@
   (gr_line (start 181 74) (end 210.25 74) (layer Edge.Cuts) (width 0.2))
   (gr_line (start 181 81.75) (end 181 74) (layer Edge.Cuts) (width 0.2))
   (gr_line (start 181 100) (end 181 81.75) (layer Edge.Cuts) (width 0.2))
-  (gr_line (start 149.25 67.5) (end 219.25 67.5) (layer F.Fab) (width 0.2))
 
   (via (at 197 87) (size 0.8) (drill 0.4) (layers F.Cu B.Cu) (net 1))
   (segment (start 198.0625 88.0625) (end 197 87) (width 0.25) (layer F.Cu) (net 1))
