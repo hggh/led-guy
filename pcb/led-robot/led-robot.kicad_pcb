@@ -64,7 +64,7 @@
     (pcbplotparams
       (layerselection 0x010fc_ffffffff)
       (usegerberextensions false)
-      (usegerberattributes false)
+      (usegerberattributes true)
       (usegerberadvancedattributes false)
       (creategerberjobfile false)
       (excludeedgelayer true)
@@ -85,9 +85,9 @@
       (subtractmaskfromsilk false)
       (outputformat 1)
       (mirror false)
-      (drillshape 1)
+      (drillshape 0)
       (scaleselection 1)
-      (outputdirectory ""))
+      (outputdirectory "/tmp/leds/"))
   )
 
   (net 0 "")
@@ -1608,7 +1608,7 @@
   (segment (start 184.34 97) (end 182.84 98.5) (width 0.25) (layer F.Cu) (net 23))
   (segment (start 202.055578 97) (end 184.34 97) (width 0.25) (layer F.Cu) (net 23))
 
-  (zone (net 10) (net_name GND) (layer F.Cu) (tstamp 0) (hatch edge 0.508)
+  (zone (net 10) (net_name GND) (layer F.Cu) (tstamp 5F2E6B56) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 16) (thermal_gap 0.508) (thermal_bridge_width 0.508))
