@@ -6,13 +6,18 @@
 
 #define NUM_LEDS 2
 #define EYE_PIN 7
+/*
+ * 1 = display message
+ * 2 = display stars
+ */
+uint8_t matrix_mode = 1;
 CRGB eyes[NUM_LEDS];
 uint8_t eyes_color_index = 1;
 unsigned long eyes_start_time = 0;
 unsigned long eyes_interval_time = 40;
 
-unsigned long message_start_time = 0;
-unsigned long message_interval_time = 0;
+unsigned long matrix_start_time = 0;
+unsigned long matrix_interval_time = 0;
 bool message_same_char = false;
 
 // LOAD = 11 = CS
@@ -146,11 +151,14 @@ void print_char(char c) {
       matrix = char_5x5_EXCLA;
       break;
   }
+  LEDmatrix.setBrightness(0);
   LEDmatrix.matrix(matrix);
 }
 
 
 void setup() {
+  Serial.begin(9600);
+
   LEDmatrix.clear();
   LEDmatrix.setBrightness(0);
 
@@ -166,9 +174,9 @@ void clear() {
   LEDmatrix.clear();
 }
 
-void set_message_interval_time(unsigned long t) {
-  message_interval_time = 650;
-  message_start_time = millis();
+void set_matrix_interval_time(unsigned long t) {
+  matrix_interval_time = t;
+  matrix_start_time = millis();
 }
 
 void print_message() {
@@ -177,7 +185,7 @@ void print_message() {
       message_same_char = true;
       // if the next char is the same as current clear the display for some time
       clear();
-      set_message_interval_time(400);
+      set_matrix_interval_time(400);
       return;
     }
   }
@@ -186,26 +194,54 @@ void print_message() {
   }
   print_char(message.charAt(message_index));
   message_index++;
-  set_message_interval_time(650);
+  set_matrix_interval_time(650);
   return;
+}
+
+void print_stars() {
+  uint8_t stars[8] = {
+    (uint8_t)random(0, 248),
+    (uint8_t)random(0, 248),
+    (uint8_t)random(0, 248),
+    (uint8_t)random(0, 248),
+    (uint8_t)random(0, 248),
+    0,
+    0,
+    0
+  };
+  LEDmatrix.setBrightness(random(0, 3));
+  LEDmatrix.matrix(stars);
+  set_matrix_interval_time(random(500, 1500));
 }
 
 void loop() {
   if (millis() - eyes_start_time >= eyes_interval_time) {
     eyes_start_time = millis();
     eyes_color_index = random(0, 35);
-    eyes_interval_time = random(500, 1200);
+    eyes_interval_time = random(800, 1400);
+    FastLED.setBrightness(random(4, 30));
   }
   fill_solid(eyes, NUM_LEDS, colors[eyes_color_index]);
   FastLED.show();
 
-  if (millis() - message_start_time >= message_interval_time) {
-    print_message();
+  if (matrix_mode == 1) {
+    if (millis() - matrix_start_time >= matrix_interval_time) {
+      print_message();
+    }
+    // we reach the end of the string..
+    if (message_index == message.length()) {
+      message_index = 0;
+
+      // jump to mode 2
+      matrix_mode = 2;
+    }
   }
 
-  // we reach the end of the string .. start again?!
-  if (message_index == message.length()) {
-    message_index = 0;
+  // Mode: Stars
+  if (matrix_mode == 2) {
+    if (millis() - matrix_start_time >= matrix_interval_time) {
+      print_stars();
+    }
   }
 }
 
