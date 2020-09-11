@@ -11,12 +11,16 @@ uint8_t eyes_color_index = 1;
 unsigned long eyes_start_time = 0;
 unsigned long eyes_interval_time = 40;
 
+unsigned long message_start_time = 0;
+unsigned long message_interval_time = 0;
+bool message_same_char = false;
+
 // LOAD = 11 = CS
 // CLK = 13 = CLK
 // DIN = 10 = DATA
 MAX7219_8x8_matrix LEDmatrix(10,11,13);
 
-String message = String("hallo jonas!");
+String message = String("halloo jonas!");
 unsigned int message_index = 0;
 
 const static CRGB::HTMLColorCode colors[35] = {
@@ -148,42 +152,60 @@ void print_char(char c) {
 
 void setup() {
   LEDmatrix.clear();
-  delay(100);
   LEDmatrix.setBrightness(0);
 
   FastLED.addLeds<NEOPIXEL, EYE_PIN>(eyes, NUM_LEDS);
   FastLED.setBrightness(5);
 
   randomSeed(analogRead(0));
+
+  message.toLowerCase();
 }
 
 void clear() {
   LEDmatrix.clear();
 }
 
+void set_message_interval_time(unsigned long t) {
+  message_interval_time = 650;
+  message_start_time = millis();
+}
+
+void print_message() {
+  if (message.charAt(message_index) == message.charAt(message_index - 1)) {
+    if (message_same_char == false) {
+      message_same_char = true;
+      // if the next char is the same as current clear the display for some time
+      clear();
+      set_message_interval_time(400);
+      return;
+    }
+  }
+  else {
+    message_same_char = false;
+  }
+  print_char(message.charAt(message_index));
+  message_index++;
+  set_message_interval_time(650);
+  return;
+}
+
 void loop() {
   if (millis() - eyes_start_time >= eyes_interval_time) {
+    eyes_start_time = millis();
     eyes_color_index = random(0, 35);
-    eyes_interval_time = random(600, 500);
+    eyes_interval_time = random(500, 1200);
   }
   fill_solid(eyes, NUM_LEDS, colors[eyes_color_index]);
   FastLED.show();
 
-  message.toLowerCase();
-  print_char(message.charAt(message_index));
-  message_index++;
-  delay(650);
-
-  if (message.charAt(message_index) == message.charAt(message_index - 1)) {
-    // if the next char is the same as current clear the display for some time
-    clear();
-    delay(400);
+  if (millis() - message_start_time >= message_interval_time) {
+    print_message();
   }
 
   // we reach the end of the string .. start again?!
   if (message_index == message.length()) {
     message_index = 0;
-    delay(2000);
   }
 }
 
