@@ -1,11 +1,16 @@
 #include <Arduino.h>
 #include <MAX7219_8x8_matrix.h>
+
 #include <FastLED.h>
+#include <Bounce2.h>
 
 #include "chars.h"
 
 #define NUM_LEDS 2
 #define EYE_PIN 7
+#define BUTTON1_PIN A0
+#define BUTTON2_PIN A1
+
 /*
  * 1 = display message
  * 2 = display stars
@@ -19,6 +24,9 @@ unsigned long eyes_interval_time = 40;
 unsigned long matrix_start_time = 0;
 unsigned long matrix_interval_time = 0;
 bool message_same_char = false;
+
+Bounce b1 = Bounce();
+Bounce b2 = Bounce();
 
 // LOAD = 11 = CS
 // CLK = 13 = CLK
@@ -159,6 +167,12 @@ void print_char(char c) {
 void setup() {
   Serial.begin(9600);
 
+  b1.attach(BUTTON1_PIN, INPUT_PULLUP);
+  b1.interval(25);
+
+  b2.attach(BUTTON2_PIN, INPUT_PULLUP);
+  b2.interval(25);
+
   LEDmatrix.clear();
   LEDmatrix.setBrightness(0);
 
@@ -215,6 +229,9 @@ void print_stars() {
 }
 
 void loop() {
+  b1.update();
+  b2.update();
+
   if (millis() - eyes_start_time >= eyes_interval_time) {
     eyes_start_time = millis();
     eyes_color_index = random(0, 35);
