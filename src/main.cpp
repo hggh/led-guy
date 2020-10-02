@@ -25,15 +25,22 @@ unsigned long matrix_start_time = 0;
 unsigned long matrix_interval_time = 0;
 bool message_same_char = false;
 
-Bounce b1 = Bounce();
-Bounce b2 = Bounce();
+Button b1 = Button();
+Button b2 = Button();
 
-// LOAD = 11 = CS
-// CLK = 13 = CLK
-// DIN = 10 = DATA
+// LOAD = 11 = CS == PB3 Pin 17
+// CLK = 13 = CLK  == PB5 Pin19
+// DIN = 10 = DATA == PB2 Pin16
 MAX7219_8x8_matrix LEDmatrix(10,11,13);
 
-String message = String("halloo jonas!");
+const uint8_t messages_size = 8;
+String messages[messages_size] = {
+  String("Hallo Jonas!"),
+  String("du bist super!"),
+};
+String message_personal = String("Hallo Jonas!");
+String message_special = String("Alles gute zum Geburtstag Jonas");
+String message = message_personal;
 unsigned int message_index = 0;
 
 const static CRGB::HTMLColorCode colors[35] = {
@@ -158,20 +165,28 @@ void print_char(char c) {
     case '!':
       matrix = char_5x5_EXCLA;
       break;
+    case ' ':
+      matrix = char_5x5_WHITESPACE;
+      break;
   }
   LEDmatrix.setBrightness(0);
   LEDmatrix.matrix(matrix);
 }
 
+void clear() {
+  LEDmatrix.clear();
+}
 
 void setup() {
   Serial.begin(9600);
 
   b1.attach(BUTTON1_PIN, INPUT_PULLUP);
   b1.interval(25);
+  b1.setPressedState(HIGH);
 
   b2.attach(BUTTON2_PIN, INPUT_PULLUP);
   b2.interval(25);
+  b2.setPressedState(HIGH);
 
   LEDmatrix.clear();
   LEDmatrix.setBrightness(0);
@@ -181,11 +196,13 @@ void setup() {
 
   randomSeed(analogRead(0));
 
-  message.toLowerCase();
-}
-
-void clear() {
-  LEDmatrix.clear();
+  LEDmatrix.matrix(char_5x5_EXCLA);
+  delay(200);
+  clear();
+  delay(75);
+  LEDmatrix.matrix(char_5x5_EXCLA);
+  delay(100);
+  clear();
 }
 
 void set_matrix_interval_time(unsigned long t) {
@@ -194,6 +211,7 @@ void set_matrix_interval_time(unsigned long t) {
 }
 
 void print_message() {
+  message.toLowerCase();
   if (message.charAt(message_index) == message.charAt(message_index - 1)) {
     if (message_same_char == false) {
       message_same_char = true;
@@ -232,14 +250,32 @@ void loop() {
   b1.update();
   b2.update();
 
+  if (b2.pressed()) {
+    // right button
+    message = message_special;
+    message_index = 0;
+    matrix_mode = 1;
+  }
+
+  if (b1.pressed()) {
+    // left button
+    message = messages[random(0, messages_size)];
+    message_index = 0;
+    matrix_mode = 1;
+  }
+
   if (millis() - eyes_start_time >= eyes_interval_time) {
     eyes_start_time = millis();
     eyes_color_index = random(0, 35);
     eyes_interval_time = random(800, 1400);
     FastLED.setBrightness(random(4, 30));
+
+    fill_solid(eyes, NUM_LEDS, colors[eyes_color_index]);
+    if ( millis() % 4 == 0) {
+      eyes[1] = colors[random(0, 35)];
+    }
+    FastLED.show();
   }
-  fill_solid(eyes, NUM_LEDS, colors[eyes_color_index]);
-  FastLED.show();
 
   if (matrix_mode == 1) {
     if (millis() - matrix_start_time >= matrix_interval_time) {
