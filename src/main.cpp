@@ -33,7 +33,7 @@ Button b2 = Button();
 // DIN = 10 = DATA == PB2 Pin16
 MAX7219_8x8_matrix LEDmatrix(10,11,13);
 
-const uint8_t messages_size = 8;
+const uint8_t messages_size = 2;
 String messages[messages_size] = {
   String("Hallo Jonas!"),
   String("du bist super!"),
@@ -182,11 +182,11 @@ void setup() {
 
   b1.attach(BUTTON1_PIN, INPUT_PULLUP);
   b1.interval(25);
-  b1.setPressedState(HIGH);
+  b1.setPressedState(LOW);
 
   b2.attach(BUTTON2_PIN, INPUT_PULLUP);
   b2.interval(25);
-  b2.setPressedState(HIGH);
+  b2.setPressedState(LOW);
 
   LEDmatrix.clear();
   LEDmatrix.setBrightness(0);
@@ -212,7 +212,7 @@ void set_matrix_interval_time(unsigned long t) {
 
 void print_message() {
   message.toLowerCase();
-  if (message.charAt(message_index) == message.charAt(message_index - 1)) {
+  if (message_index != 0 && message.charAt(message_index) == message.charAt(message_index - 1)) {
     if (message_same_char == false) {
       message_same_char = true;
       // if the next char is the same as current clear the display for some time
@@ -255,6 +255,7 @@ void loop() {
     message = message_special;
     message_index = 0;
     matrix_mode = 1;
+    matrix_start_time = 0;
   }
 
   if (b1.pressed()) {
@@ -262,6 +263,7 @@ void loop() {
     message = messages[random(0, messages_size)];
     message_index = 0;
     matrix_mode = 1;
+    matrix_start_time = 0;
   }
 
   if (millis() - eyes_start_time >= eyes_interval_time) {
