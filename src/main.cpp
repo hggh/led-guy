@@ -33,15 +33,17 @@ Button b2 = Button();
 // DIN = 10 = DATA == PB2 Pin16
 MAX7219_8x8_matrix LEDmatrix(10,11,13);
 
-const uint8_t messages_size = 2;
+const uint8_t messages_size = 3;
 String messages[messages_size] = {
-  String("Hallo Jonas!"),
-  String("du bist super!"),
+  String("alles gute zum geburtstag"),
+  String("frohes neues jahr"),
+  String("du bist toll!"),
 };
-String message_personal = String("Hallo Jonas!");
-String message_special = String("Alles gute zum Geburtstag Jonas");
+String message_personal = String("hallo zusammen!");
+String message_special = String("hallo zusammen!");
 String message = message_personal;
 unsigned int message_index = 0;
+unsigned int current_messages_index = 0;
 
 const static CRGB::HTMLColorCode colors[35] = {
   CRGB::Crimson,
@@ -202,6 +204,8 @@ void setup() {
   delay(75);
   LEDmatrix.matrix(char_5x5_EXCLA);
   delay(100);
+  LEDmatrix.matrix(char_5x5_EXCLA);
+  delay(100);
   clear();
 }
 
@@ -260,10 +264,15 @@ void loop() {
 
   if (b1.pressed()) {
     // left button
-    message = messages[random(0, messages_size)];
+    message = messages[current_messages_index];
     message_index = 0;
     matrix_mode = 1;
     matrix_start_time = 0;
+
+    current_messages_index++;
+    if (current_messages_index > messages_size) {
+      current_messages_index = 0;
+    }
   }
 
   if (millis() - eyes_start_time >= eyes_interval_time) {
