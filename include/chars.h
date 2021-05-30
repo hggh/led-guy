@@ -320,6 +320,18 @@ uint8_t char_5x5_EXCLA[8] = {
   B00000000
 };
 
+// ?
+uint8_t char_5x5_QUESTION_MARK[8] = {
+  B11100000,
+  B10100000,
+  B00100000,
+  B00000000,
+  B00100000,
+  B00000000,
+  B00000000,
+  B00000000
+};
+
 // Whitespace
 uint8_t char_5x5_WHITESPACE[8] = {
   B00000000,
